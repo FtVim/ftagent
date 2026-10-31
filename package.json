@@ -1,0 +1,36 @@
+{
+    "name": "ftagent",
+    "version": "0.2.0",
+    "description": "An aesthetic and feature-rich pi config.",
+    "keywords": [
+        "pi-package",
+        "pi",
+        "theme",
+        "config"
+    ],
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/FtVim/ftagent.git"
+    },
+    "files": [
+        "extensions/",
+        "lib/",
+        "themes/",
+        "README.md",
+        "package.json"
+    ],
+    "pi": {
+        "extensions": [
+            "./extensions/ftagent.ts",
+            "./extensions/banner.ts"
+        ],
+        "themes": [
+            "./themes"
+        ]
+    },
+    "peerDependencies": {
+        "@earendil-works/pi-coding-agent": "*",
+        "@earendil-works/pi-tui": "*"
+    }
+}
