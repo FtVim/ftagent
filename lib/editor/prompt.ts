@@ -24,21 +24,13 @@ function frame_prompt_lines(
     lines: string[],
     width: number,
     border_color: (text: string) => string,
-    accent_color: (text: string) => string,
 ): string[] {
     if (lines.length === 0 || width < 2) {
         return lines.map((line) => truncateToWidth(line, width, ""));
     }
 
     const inner_width = width - 2;
-    const feather = accent_color("❧");
-    const top = width >= 5 + visibleWidth(feather)
-        ? border_color("╭─ ") +
-            feather +
-            border_color(
-                ` ${"─".repeat(width - 5 - visibleWidth(feather))}╮`,
-            )
-        : border_color(`╭${"─".repeat(width - 2)}╮`);
+    const top = border_color(`╭${"─".repeat(width - 2)}╮`);
     const bottom = border_color(`╰${"─".repeat(width - 2)}╯`);
     const framed = [top];
     const content_lines = lines.length === 1 ? lines : lines.slice(1, -1);
@@ -75,7 +67,6 @@ export class PromptEditor extends CustomEditor {
     private readonly operator_engine = new OperatorEngine();
     private readonly visual_engine = new VisualEngine();
     private readonly keybindings_manager: KeybindingsManager;
-    private readonly accent_color: (text: string) => string;
     private readonly notify_compatibility: (message: string) => void;
     private insert_intent:
         | { operator?: OperatorResult; command?: string }
@@ -92,12 +83,10 @@ export class PromptEditor extends CustomEditor {
         tui: ConstructorParameters<typeof CustomEditor>[0],
         theme: ConstructorParameters<typeof CustomEditor>[1],
         keybindings: KeybindingsManager,
-        accent_color: (text: string) => string,
         notify_compatibility: (message: string) => void,
     ) {
         super(tui, theme, keybindings);
         this.keybindings_manager = keybindings;
-        this.accent_color = accent_color;
         this.notify_compatibility = notify_compatibility;
     }
 
@@ -709,7 +698,6 @@ export class PromptEditor extends CustomEditor {
             lines,
             width,
             (text) => this.borderColor(text),
-            this.accent_color,
         );
     }
 }

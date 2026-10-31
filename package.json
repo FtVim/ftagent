@@ -5,7 +5,6 @@
     "keywords": [
         "pi-package",
         "pi",
-        "theme",
         "config"
     ],
     "license": "MIT",
@@ -16,17 +15,12 @@
     "files": [
         "extensions/",
         "lib/",
-        "themes/",
         "README.md",
         "package.json"
     ],
     "pi": {
         "extensions": [
-            "./extensions/ftagent.ts",
-            "./extensions/banner.ts"
-        ],
-        "themes": [
-            "./themes"
+            "./extensions/ftagent.ts"
         ]
     },
     "peerDependencies": {
