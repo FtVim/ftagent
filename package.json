@@ -1,6 +1,7 @@
 {
     "name": "ftagent",
     "version": "0.2.0",
+    "type": "module",
     "description": "An aesthetic and feature-rich pi config.",
     "keywords": [
         "pi-package",
