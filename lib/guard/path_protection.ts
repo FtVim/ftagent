@@ -1,3 +1,4 @@
+import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { resolve, sep } from "node:path";
 
 const PATH_LENGTH_MAX = 4096;
@@ -48,4 +49,30 @@ export function find_protected_rule(
         }
     }
     return undefined;
+}
+
+export function check_path_protection(
+    path: string | undefined,
+    ctx: ExtensionContext,
+): { block: true; reason: string } | undefined {
+    if (path === undefined || path.length === 0) {
+        return {
+            block: true,
+            reason: "Path protection could not read the target path",
+        };
+    }
+
+    const rule = find_protected_rule(path, ctx.cwd);
+    if (rule === undefined) {
+        return undefined;
+    }
+
+    // The block is unconditional; only the notification needs a UI.
+    if (ctx.hasUI) {
+        ctx.ui.notify(`Blocked write to protected path: ${path}`, "warning");
+    }
+    return {
+        block: true,
+        reason: `Path "${path}" is protected (${rule})`,
+    };
 }
