@@ -1,4 +1,9 @@
-import { CustomEditor, type KeybindingsManager, VERSION } from "@earendil-works/pi-coding-agent";
+import {
+    CustomEditor,
+    type ExtensionContext,
+    type KeybindingsManager,
+    VERSION,
+} from "@earendil-works/pi-coding-agent";
 import {
     decodeKittyPrintable,
     Editor,
@@ -16,11 +21,56 @@ import { VisualEngine } from "./visual.ts";
 type EditorMode = "normal" | "insert";
 type EditorAdapter = ReturnType<typeof create_editor_adapter>;
 
+function fit_border(
+    left: string,
+    right: string,
+    width: number,
+    border: (text: string) => string,
+): string {
+    if (width <= 0) {
+        return "";
+    }
+    if (width === 1) {
+        return border("─");
+    }
+
+    const content_width = width - 2;
+    let left_text = left.length > 0 ? ` ${left} ` : "";
+    let right_text = right.length > 0 ? ` ${right} ` : "";
+    while (
+        visibleWidth(left_text) + visibleWidth(right_text) > content_width &&
+        visibleWidth(right_text) > 0
+    ) {
+        right_text = truncateToWidth(
+            right_text,
+            visibleWidth(right_text) - 1,
+            "",
+        );
+    }
+    while (
+        visibleWidth(left_text) + visibleWidth(right_text) > content_width &&
+        visibleWidth(left_text) > 0
+    ) {
+        left_text = truncateToWidth(
+            left_text,
+            visibleWidth(left_text) - 1,
+            "",
+        );
+    }
+
+    const gap = "─".repeat(
+        content_width - visibleWidth(left_text) - visibleWidth(right_text),
+    );
+    return border("╰") + left_text + border(gap) + right_text + border("╯");
+}
+
 function frame_prompt_lines(
     lines: string[],
     width: number,
     border_color: (text: string) => string,
-    mode: EditorMode,
+    status_left: string,
+    status_right: string,
+    status_color: (text: string) => string,
 ): string[] {
     if (lines.length === 0 || width < 2) {
         return lines.map((line) => truncateToWidth(line, width, ""));
@@ -28,12 +78,12 @@ function frame_prompt_lines(
 
     const inner_width = width - 2;
     const top = border_color(`╭${"─".repeat(width - 2)}╮`);
-    const label = mode === "normal" ? " NORMAL " : " INSERT ";
-    const bottom = width >= label.length + 2
-        ? border_color(`╰${"─".repeat(width - label.length - 2)}`) +
-            label +
-            border_color("╯")
-        : border_color(`╰${"─".repeat(width - 2)}╯`);
+    const bottom = fit_border(
+        status_color(status_left),
+        status_color(status_right),
+        width,
+        border_color,
+    );
     const framed = [top];
     const content_lines = lines.length === 1 ? lines : lines.slice(1, -1);
 
@@ -65,10 +115,12 @@ function is_grapheme(value: string): boolean {
 
 export class PromptEditor extends CustomEditor {
     private mode: EditorMode = "insert";
+    private git_branch: string | undefined;
     private readonly normal_engine = new NormalEngine();
     private readonly operator_engine = new OperatorEngine();
     private readonly visual_engine = new VisualEngine();
     private readonly keybindings_manager: KeybindingsManager;
+    private readonly context: ExtensionContext;
     private readonly notify_compatibility: (message: string) => void;
     private insert_intent:
         | { operator?: OperatorResult; command?: string }
@@ -85,11 +137,18 @@ export class PromptEditor extends CustomEditor {
         tui: ConstructorParameters<typeof CustomEditor>[0],
         theme: ConstructorParameters<typeof CustomEditor>[1],
         keybindings: KeybindingsManager,
+        context: ExtensionContext,
         notify_compatibility: (message: string) => void,
     ) {
         super(tui, theme, keybindings);
         this.keybindings_manager = keybindings;
+        this.context = context;
         this.notify_compatibility = notify_compatibility;
+    }
+
+    set_git_branch(branch: string | undefined): void {
+        this.git_branch = branch;
+        this.tui.requestRender();
     }
 
     private editor_adapter(): EditorAdapter {
@@ -688,11 +747,30 @@ export class PromptEditor extends CustomEditor {
                 );
             }
         }
+        const model = this.context.model
+            ? `${this.context.model.provider}/${this.context.model.id}`
+            : "no model";
+        const usage = this.context.getContextUsage();
+        const context_window = usage?.contextWindow ??
+            this.context.model?.contextWindow;
+        const context_status = usage?.percent != null && context_window
+            ? `ctx ${Math.round(usage.percent)}%/${(context_window / 1000).toFixed(0)}k`
+            : "ctx ?";
+        const home = process.env.HOME;
+        const cwd = home && (
+                this.context.cwd === home ||
+                this.context.cwd.startsWith(`${home}/`)
+            )
+            ? `~${this.context.cwd.slice(home.length)}`
+            : this.context.cwd;
+        const branch = this.git_branch ? ` (${this.git_branch})` : "";
         return frame_prompt_lines(
             lines,
             width,
             (text) => this.borderColor(text),
-            this.mode,
+            `${model} · ${context_status}`,
+            `${cwd}${branch}`,
+            (text) => this.context.ui.theme.fg("muted", text),
         );
     }
 }

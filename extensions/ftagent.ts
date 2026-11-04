@@ -27,15 +27,30 @@ export function install_banner(ctx: ExtensionContext): void {
     }));
 }
 
-export function install_prompt_editor(ctx: ExtensionContext): void {
+export function install_prompt_editor(
+    pi: ExtensionAPI,
+    ctx: ExtensionContext,
+): void {
     ctx.ui.setEditorComponent(
-        (tui, theme, keybindings) =>
-            new PromptEditor(
+        (tui, theme, keybindings) => {
+            const editor = new PromptEditor(
                 tui,
                 theme,
                 keybindings,
+                ctx,
                 (message) => ctx.ui.notify(message, "warning"),
-            ),
+            );
+            void pi.exec("git", ["-C", ctx.cwd, "branch", "--show-current"])
+                .then(({ stdout, code }) => {
+                    if (code === 0) {
+                        editor.set_git_branch(stdout.trim() || undefined);
+                    }
+                })
+                .catch(() => {
+                    ctx.ui.notify("Could not read the Git branch", "warning");
+                });
+            return editor;
+        },
     );
 }
 
@@ -63,6 +78,6 @@ export default function ftagent_extension(pi: ExtensionAPI): void {
         }
 
         install_banner(ctx);
-        install_prompt_editor(ctx);
+        install_prompt_editor(pi, ctx);
     });
 }
