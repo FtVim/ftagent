@@ -16,6 +16,8 @@
     "files": [
         "extensions/",
         "lib/",
+        "agents/",
+        "prompts/",
         "README.md",
         "package.json"
     ],
