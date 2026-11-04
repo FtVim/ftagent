@@ -20,6 +20,7 @@ function frame_prompt_lines(
     lines: string[],
     width: number,
     border_color: (text: string) => string,
+    mode: EditorMode,
 ): string[] {
     if (lines.length === 0 || width < 2) {
         return lines.map((line) => truncateToWidth(line, width, ""));
@@ -27,7 +28,12 @@ function frame_prompt_lines(
 
     const inner_width = width - 2;
     const top = border_color(`╭${"─".repeat(width - 2)}╮`);
-    const bottom = border_color(`╰${"─".repeat(width - 2)}╯`);
+    const label = mode === "normal" ? " NORMAL " : " INSERT ";
+    const bottom = width >= label.length + 2
+        ? border_color(`╰${"─".repeat(width - label.length - 2)}`) +
+            label +
+            border_color("╯")
+        : border_color(`╰${"─".repeat(width - 2)}╯`);
     const framed = [top];
     const content_lines = lines.length === 1 ? lines : lines.slice(1, -1);
 
@@ -686,6 +692,7 @@ export class PromptEditor extends CustomEditor {
             lines,
             width,
             (text) => this.borderColor(text),
+            this.mode,
         );
     }
 }
