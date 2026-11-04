@@ -317,7 +317,7 @@ export class PromptEditor extends CustomEditor {
         } catch {
             this.mode = "insert";
             this.report_compatibility(
-                "ftagent Vim requires the audited Pi 1.4.0 editor; ordinary editing is active.",
+                "ftagent Vim requires audited Pi 1.4.0/1.5.0; ordinary editing is active.",
             );
             return false;
         }

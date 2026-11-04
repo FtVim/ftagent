@@ -62,7 +62,16 @@ interface PrivateEditor {
 }
 
 export const SUPPORTED_PI_EDITOR_VERSIONS = Object.freeze(
-    ["0.99.1", "0.99.2", "1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0"] as const,
+    [
+        "0.99.1",
+        "0.99.2",
+        "1.0.0",
+        "1.1.0",
+        "1.2.0",
+        "1.3.0",
+        "1.4.0",
+        "1.5.0",
+    ] as const,
 );
 export type SupportedPiEditorVersion = (typeof SUPPORTED_PI_EDITOR_VERSIONS)[number];
 
