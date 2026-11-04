@@ -1,9 +1,7 @@
-import type {
-    ExtensionAPI,
-    ExtensionContext,
-} from "@earendil-works/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { render_banner } from "../lib/banner.ts";
 import { PromptEditor } from "../lib/editor/prompt.ts";
+import { auto_commit_on_shutdown } from "../lib/git/auto_commit.ts";
 import { check_path_protection } from "../lib/guard/path_protection.ts";
 import { check_permission_gate } from "../lib/guard/permission_gate.ts";
 
@@ -42,7 +40,8 @@ export function install_prompt_editor(ctx: ExtensionContext): void {
 }
 
 export default function ftagent_extension(pi: ExtensionAPI): void {
-    pi.on("tool_call", async (event, ctx) => {
+    pi.on("session_shutdown", (_event, ctx) => auto_commit_on_shutdown(pi, ctx));
+    pi.on("tool_call", (event, ctx) => {
         if (event.toolName === "write" || event.toolName === "edit") {
             const path = read_string_field(event.input, "path");
             return check_path_protection(path, ctx);

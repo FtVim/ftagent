@@ -1,8 +1,4 @@
-import {
-    CustomEditor,
-    type KeybindingsManager,
-    VERSION,
-} from "@earendil-works/pi-coding-agent";
+import { CustomEditor, type KeybindingsManager, VERSION } from "@earendil-works/pi-coding-agent";
 import {
     decodeKittyPrintable,
     Editor,
@@ -197,9 +193,7 @@ export class PromptEditor extends CustomEditor {
 
         const chunk = this.paste_tail + data;
         const end = chunk.indexOf(PASTE_END);
-        const content = end < 0
-            ? chunk.slice(0, -(PASTE_END.length - 1))
-            : chunk.slice(0, end);
+        const content = end < 0 ? chunk.slice(0, -(PASTE_END.length - 1)) : chunk.slice(0, end);
         if (!this.paste_overflow) {
             if (this.paste_frame.length + content.length > PASTE_LIMIT) {
                 this.paste_frame = "";
@@ -307,9 +301,7 @@ export class PromptEditor extends CustomEditor {
                 return;
             }
         } catch (error) {
-            const detail = error instanceof Error
-                ? error.message
-                : String(error);
+            const detail = error instanceof Error ? error.message : String(error);
             this.report_compatibility(
                 `ftagent Vim ignored an unsafe editor action: ${detail}`,
             );
@@ -602,9 +594,7 @@ export class PromptEditor extends CustomEditor {
         const column = command === "O" ? 0 : position.col;
         adapter.begin_insert_session();
         adapter.replace({ line, col: column }, { line, col: column }, "\n");
-        const destination = command === "O"
-            ? { line, col: 0 }
-            : { line: line + 1, col: 0 };
+        const destination = command === "O" ? { line, col: 0 } : { line: line + 1, col: 0 };
         adapter.move(destination);
         this.insert_session_active = true;
         this.insert_intent = { command };
@@ -617,14 +607,12 @@ export class PromptEditor extends CustomEditor {
         for (let index = 0; index < count; index += 1) {
             const insert_command = this.operator_engine.repeat_insert_command;
             const inserted = this.operator_engine.repeat_insertion;
-            const literal = insert_command === undefined
-                ? undefined
-                : new NormalEngine().input(
-                    insert_command,
-                    this.getText(),
-                    this.getCursor(),
-                    adapter.motion_boundaries(),
-                );
+            const literal = insert_command === undefined ? undefined : new NormalEngine().input(
+                insert_command,
+                this.getText(),
+                this.getCursor(),
+                adapter.motion_boundaries(),
+            );
             const change = insert_command === undefined
                 ? this.operator_engine.repeat_at(
                     this.getText(),

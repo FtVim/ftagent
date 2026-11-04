@@ -49,16 +49,10 @@ export class VisualEngine {
                 to: unit.index + unit.segment.length,
                 value: unit.segment,
             }));
-            let index = units.findIndex((unit) =>
-                unit.from <= at && at < unit.to
-            );
+            let index = units.findIndex((unit) => unit.from <= at && at < unit.to);
             if (index < 0) return undefined;
             const kind = (value: string) =>
-                /\s/u.test(value)
-                    ? 0
-                    : key === "W" || /[\p{L}\p{N}_]/u.test(value)
-                    ? 1
-                    : 2;
+                /\s/u.test(value) ? 0 : key === "W" || /[\p{L}\p{N}_]/u.test(value) ? 1 : 2;
             while (
                 index < units.length - 1 && kind(units[index]!.value) === 0
             ) index++;
@@ -168,8 +162,7 @@ export class VisualEngine {
         const anchor = this.anchor;
         if (!anchor) return undefined;
         const lines = text.split("\n");
-        const order = (a: Position, b: Position) =>
-            a.line - b.line || a.col - b.col;
+        const order = (a: Position, b: Position) => a.line - b.line || a.col - b.col;
         const first = order(anchor, cursor) <= 0 ? anchor : cursor;
         const last = order(anchor, cursor) <= 0 ? cursor : anchor;
         if (this.mode === MODES.line) {

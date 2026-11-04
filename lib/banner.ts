@@ -70,7 +70,9 @@ function row_text(row: BannerRow): string {
 }
 
 // Center the whole block so short rows keep their alignment with the art.
-const LOGO_WIDTH = Math.max(...LOGO_ROWS.map((row) => visibleWidth(row_text(row))));
+const LOGO_WIDTH = Math.max(
+    ...LOGO_ROWS.map((row) => visibleWidth(row_text(row))),
+);
 
 function assert(condition: boolean, message: string): asserts condition {
     if (!condition) {

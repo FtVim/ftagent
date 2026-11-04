@@ -252,8 +252,7 @@ export class OperatorEngine {
     }
 
     cancel(): boolean {
-        const pending =
-            !!(this.pending || this.digits || this.object || this.find);
+        const pending = !!(this.pending || this.digits || this.object || this.find);
         this.pending = undefined;
         this.digits = "";
         this.operand_count = "";
@@ -422,10 +421,7 @@ export class OperatorEngine {
                 );
                 const replacement = lines.slice(cursor.line, last + 1).map((
                     line,
-                ) => op === ">"
-                    ? "  " + line
-                    : line.replace(/^(?: {1,2}|\t)/, "")
-                ).join("\n");
+                ) => op === ">" ? "  " + line : line.replace(/^(?: {1,2}|\t)/, "")).join("\n");
                 if (
                     replacement ===
                         lines.slice(cursor.line, last + 1).join("\n")
@@ -497,9 +493,7 @@ export class OperatorEngine {
                     (exclusive_end ? 1 : 0);
                 const original = lines.slice(first, last + 1).join("\n");
                 const replacement = lines.slice(first, last + 1).map((line) =>
-                    op === ">"
-                        ? "  " + line
-                        : line.replace(/^(?: {1,2}|\t)/, "")
+                    op === ">" ? "  " + line : line.replace(/^(?: {1,2}|\t)/, "")
                 ).join("\n");
                 if (replacement === original) return { handled: true };
                 return {
@@ -521,8 +515,7 @@ export class OperatorEngine {
                 const b = last + 1 < lines.length
                     ? offset({ line: last + 1, col: 0 })
                     : text.length;
-                const line_text =
-                    lines.slice(cursor.line, last + 1).join("\n") +
+                const line_text = lines.slice(cursor.line, last + 1).join("\n") +
                     "\n";
                 if (op === "y") {
                     if (safe(a, b)) {
@@ -534,11 +527,7 @@ export class OperatorEngine {
                 const result = edit(
                     from,
                     b,
-                    op === "c" && b < text.length
-                        ? "\n"
-                        : op === "c" && from !== a
-                        ? "\n"
-                        : "",
+                    op === "c" && b < text.length ? "\n" : op === "c" && from !== a ? "\n" : "",
                     true,
                 );
                 if (result.edit) {
@@ -621,8 +610,7 @@ export class OperatorEngine {
                     }));
                     let index = units.findIndex((p) => p.at === a);
                     if (index < 0) return { handled: true };
-                    const kind = (char: string) =>
-                        space.test(char) ? 0 : word.test(char) ? 1 : 2;
+                    const kind = (char: string) => space.test(char) ? 0 : word.test(char) ? 1 : 2;
                     for (let n = 0; n < count; n++) {
                         if (key === "w") {
                             const group = kind(units[index]!.char);
@@ -659,10 +647,8 @@ export class OperatorEngine {
                             ) index++;
                         }
                     }
-                    b = index === units.length
-                        ? text.length
-                        : units[index]!.at +
-                            (key === "e" ? units[index]!.char.length : 0);
+                    b = index === units.length ? text.length : units[index]!.at +
+                        (key === "e" ? units[index]!.char.length : 0);
                 }
             }
             if (b === undefined || b === a) return { handled: true };
@@ -785,13 +771,7 @@ export class OperatorEngine {
             let index = units.findIndex((p) => p.start <= at && p.end > at);
             if (index < 0) return undefined;
             const kind = (char: string) =>
-                space.test(char)
-                    ? 0
-                    : key === "W"
-                    ? 1
-                    : word.test(char)
-                    ? 1
-                    : 2;
+                space.test(char) ? 0 : key === "W" ? 1 : word.test(char) ? 1 : 2;
             if (kind(units[index]!.char) === 0) {
                 while (
                     index < units.length - 1 && kind(units[index]!.char) === 0

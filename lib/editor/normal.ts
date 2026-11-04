@@ -224,15 +224,11 @@ export class NormalEngine {
                     col: part.index,
                     char: part.segment,
                 })).concat(
-                    index < lines.length - 1
-                        ? [{ line: index, col: line.length, char: "\n" }]
-                        : [],
+                    index < lines.length - 1 ? [{ line: index, col: line.length, char: "\n" }] : [],
                 )
             );
             if (!units.length) return result(cursor.line, cursor.col);
-            let at = units.findIndex((p) =>
-                p.line === cursor.line && p.col === cursor.col
-            );
+            let at = units.findIndex((p) => p.line === cursor.line && p.col === cursor.col);
             if (at < 0) at = units.length;
             for (let n = 0; n < count; n++) {
                 if (key === "w") {

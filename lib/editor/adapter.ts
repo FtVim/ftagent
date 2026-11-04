@@ -64,8 +64,7 @@ interface PrivateEditor {
 export const SUPPORTED_PI_EDITOR_VERSIONS = Object.freeze(
     ["0.99.1", "0.99.2", "1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0"] as const,
 );
-export type SupportedPiEditorVersion =
-    (typeof SUPPORTED_PI_EDITOR_VERSIONS)[number];
+export type SupportedPiEditorVersion = (typeof SUPPORTED_PI_EDITOR_VERSIONS)[number];
 
 export function is_supported_pi_editor_version(
     version: unknown,
@@ -365,19 +364,16 @@ export function create_editor_adapter(
             const depth = session.prefix.length;
             if (
                 stack.length < depth || stack.length !== stack.stack.length ||
-                session.prefix.some((snapshot, index) =>
-                    stack.stack[index] !== snapshot
-                )
+                session.prefix.some((snapshot, index) => stack.stack[index] !== snapshot)
             ) return;
             const after = editor.getText();
-            const inserted =
-                after.startsWith(session.text.slice(0, session.anchor)) &&
+            const inserted = after.startsWith(session.text.slice(0, session.anchor)) &&
                     after.endsWith(session.text.slice(session.anchor))
-                    ? after.slice(
-                        session.anchor,
-                        after.length - (session.text.length - session.anchor),
-                    )
-                    : undefined;
+                ? after.slice(
+                    session.anchor,
+                    after.length - (session.text.length - session.anchor),
+                )
+                : undefined;
             if (
                 after === session.before.state.lines.join("\n") &&
                 editor.pasteCounter === session.before.pasteCounter
@@ -415,9 +411,7 @@ export function create_editor_adapter(
                 boundaries(line, editor).map((col) => ({ line: index, col }))
             );
             const current = editor.getCursor();
-            const at = positions.findIndex((p) =>
-                p.line === current.line && p.col === current.col
-            );
+            const at = positions.findIndex((p) => p.line === current.line && p.col === current.col);
             if (at < 0) throw new Error("Invalid cursor boundary");
             const target = positions[
                 Math.max(0, Math.min(positions.length - 1, at + delta))
