@@ -1,9 +1,8 @@
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
-import { render_banner } from "../lib/banner.ts";
-import { PromptEditor } from "../lib/editor/prompt.ts";
-import { auto_commit_on_shutdown } from "../lib/git/auto_commit.ts";
-import { check_path_protection } from "../lib/guard/path_protection.ts";
-import { check_permission_gate } from "../lib/guard/permission_gate.ts";
+import { PromptEditor } from "../lib/editor/index.ts";
+import { auto_commit_on_shutdown, GitCheckpoints } from "../lib/git/index.ts";
+import { check_path_protection, check_permission_gate } from "../lib/guard/index.ts";
+import { render_header } from "../lib/header/index.ts";
 
 function read_string_field(
     input: unknown,
@@ -22,14 +21,14 @@ function read_string_field(
 
 export function install_banner(ctx: ExtensionContext): void {
     ctx.ui.setHeader((_tui, theme) => ({
-        render: (width) => render_banner(theme, width),
+        render: (width) => render_header(theme, width),
         invalidate() {},
     }));
 }
 
 export function install_prompt_editor(
-    pi: ExtensionAPI,
     ctx: ExtensionContext,
+    exec: ExtensionAPI["exec"],
 ): void {
     ctx.ui.setEditorComponent(
         (tui, theme, keybindings) => {
@@ -40,7 +39,7 @@ export function install_prompt_editor(
                 ctx,
                 (message) => ctx.ui.notify(message, "warning"),
             );
-            void pi.exec("git", ["-C", ctx.cwd, "branch", "--show-current"])
+            void exec("git", ["-C", ctx.cwd, "branch", "--show-current"])
                 .then(({ stdout, code }) => {
                     if (code === 0) {
                         editor.set_git_branch(stdout.trim() || undefined);
@@ -55,7 +54,19 @@ export function install_prompt_editor(
 }
 
 export default function ftagent_extension(pi: ExtensionAPI): void {
-    pi.on("session_shutdown", (_event, ctx) => auto_commit_on_shutdown(pi, ctx));
+    const git_checkpoints = new GitCheckpoints();
+    pi.on("session_shutdown", (_event, ctx) => auto_commit_on_shutdown(ctx, pi.exec));
+    pi.on("turn_start", (_event, ctx) => git_checkpoints.capture(ctx, pi.exec));
+    pi.on(
+        "session_before_fork",
+        (event, ctx) => git_checkpoints.restore(event.entryId, ctx, pi.exec),
+    );
+    pi.on("tool_result", (_event, ctx) => {
+        git_checkpoints.track_current_entry(ctx);
+    });
+    pi.on("agent_settled", () => {
+        git_checkpoints.clear();
+    });
     pi.on("tool_call", (event, ctx) => {
         if (event.toolName === "write" || event.toolName === "edit") {
             const path = read_string_field(event.input, "path");
@@ -70,6 +81,7 @@ export default function ftagent_extension(pi: ExtensionAPI): void {
         return undefined;
     });
     pi.on("session_start", (_event, ctx) => {
+        git_checkpoints.clear();
         if (!ctx.hasUI) {
             return;
         }
@@ -78,6 +90,6 @@ export default function ftagent_extension(pi: ExtensionAPI): void {
         }
 
         install_banner(ctx);
-        install_prompt_editor(pi, ctx);
+        install_prompt_editor(ctx, pi.exec);
     });
 }

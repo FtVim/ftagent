@@ -69,50 +69,58 @@ function commit_message(summary: string): string {
     return conventional_subject.slice(0, COMMIT_SUBJECT_LENGTH_MAX);
 }
 
-function report_failure(ctx: ExtensionContext, message: string): void {
-    if (ctx.hasUI) {
-        ctx.ui.notify(message, "warning");
-        return;
-    }
-    throw new Error(message);
-}
-
-function run_git(
-    pi: ExtensionAPI,
-    ctx: ExtensionContext,
-    args: string[],
-): Promise<{ stdout: string; stderr: string; code: number }> {
-    return pi.exec("git", ["-C", ctx.cwd, ...args]);
-}
-
 export async function auto_commit_on_shutdown(
-    pi: ExtensionAPI,
     ctx: ExtensionContext,
+    exec: ExtensionAPI["exec"],
 ): Promise<void> {
-    const status = await run_git(pi, ctx, ["status", "--porcelain"]);
+    const status = await exec("git", [
+        "-C",
+        ctx.cwd,
+        "status",
+        "--porcelain",
+    ]);
     if (status.code !== 0) {
-        report_failure(ctx, `Auto-commit could not read git status: ${status.stderr}`);
+        report_failure(ctx, "Auto-commit could not read Git status", status.stderr);
         return;
     }
     if (status.stdout.trim().length === 0) {
         return;
     }
 
-    const summary = last_assistant_summary(ctx.sessionManager.getEntries());
-    const message = commit_message(summary);
-    const stage = await run_git(pi, ctx, ["add", "-A"]);
+    const message = commit_message(
+        last_assistant_summary(ctx.sessionManager.getEntries()),
+    );
+    const stage = await exec("git", ["-C", ctx.cwd, "add", "-A"]);
     if (stage.code !== 0) {
-        report_failure(ctx, `Auto-commit could not stage changes: ${stage.stderr}`);
+        report_failure(ctx, "Auto-commit could not stage changes", stage.stderr);
         return;
     }
 
-    const commit = await run_git(pi, ctx, ["commit", "-m", message]);
+    const commit = await exec("git", [
+        "-C",
+        ctx.cwd,
+        "commit",
+        "-m",
+        message,
+    ]);
     if (commit.code !== 0) {
-        report_failure(ctx, `Auto-commit failed: ${commit.stderr}`);
+        report_failure(ctx, "Auto-commit failed", commit.stderr);
         return;
     }
-
     if (ctx.hasUI) {
         ctx.ui.notify(`Auto-committed: ${message}`, "info");
     }
+}
+
+function report_failure(
+    ctx: ExtensionContext,
+    action: string,
+    detail: string,
+): void {
+    const message = `${action}: ${detail}`;
+    if (ctx.hasUI) {
+        ctx.ui.notify(message, "warning");
+        return;
+    }
+    throw new Error(message);
 }

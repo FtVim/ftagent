@@ -118,7 +118,7 @@ function center_line(line: string, width: number): string {
     return " ".repeat(padding) + line;
 }
 
-export function render_banner(theme: Theme, width: number): string[] {
+export function render_header(theme: Theme, width: number): string[] {
     assert(Number.isInteger(width), "render width must be an integer");
     assert(width >= 0, "render width must be non-negative");
     assert(width <= 4096, "render width exceeds 4096 columns");
