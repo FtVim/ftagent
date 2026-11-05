@@ -1,15 +1,40 @@
 ---
-description: Create one verbatim feature document for complex or high-risk work
+description: Explore the codebase and produce a numbered implementation plan
 ---
-Preserve the complete original request verbatim; do not allow a planning
-summary to replace it.
+<!-- ftagent:todos -->
 
-1. If exploration shows the task is small and understood, say planning files
-   are unnecessary and direct execution to `/build`.
-2. For complex/high-risk work, invoke "planner" with the verbatim user request
-   and exploration findings. Create one feature document containing context,
-   acceptance criteria, invalid states to exclude, and a concise build outline.
-3. Preserve exact context strings, error messages, and prompt details. Do not
-   paraphrase the user's requirements.
-4. Check for an existing feature document first; never overwrite it.
-5. Present the document for approval and stop. Do not implement.
+Reconcile persisted plan todos included in session context when refining or
+continuing an existing plan. Preserve completed steps when still relevant and
+mark them `[DONE:n]`.
+
+Copy the persisted todos into the planner's task; use `none` when no saved
+todos are present.
+
+Call the subagent tool once in sequential `chain` mode:
+
+```json
+{
+  "chain": [
+    {
+      "agent": "scout",
+      "task": "Read-only exploration. Original request (verbatim):\n$@"
+    },
+    {
+      "agent": "planner",
+      "task": "Request: $@\nTodos: [session todos or none]\nScout: {previous}\nReturn Plan."
+    }
+  ]
+}
+```
+
+The planner returns the plan in its response under a `Plan:` heading, with
+steps formatted as `1. ...`, `2. ...`. Keep the plan proportional: skip
+planning for obvious small changes; for larger work, order coherent slices by
+their dependencies and surface important risks or decisions early. Include a
+clear outcome and suitable verification in each step.
+
+Do not create a `.md` plan file or implement the plan. The extension saves the
+numbered steps as session todos and tracks `[DONE:n]` markers. Present the
+planner's numbered list under a `Plan:` heading in the final response.
+
+Follow the user's exact requirements; do not paraphrase their request.
