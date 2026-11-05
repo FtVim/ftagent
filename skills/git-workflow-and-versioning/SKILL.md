@@ -13,8 +13,38 @@ the project's configured workflow when it differs from these defaults.
 ## Changes and Commits
 
 - Keep each commit limited to one coherent unit of work.
-- Use a descriptive conventional subject, such as `fix: preserve todo order`.
-  Explain why in the body when the reason is not clear from the subject.
+- Write descriptive commit messages that explain why the change matters, not
+  only what files or code changed.
+- Use this format:
+
+  ```text
+  <type>: <short description>
+
+  <optional body explaining why>
+  ```
+
+- Choose the type that best describes the change:
+  - `feat` — new functionality
+  - `fix` — bug fix
+  - `refactor` — code change without behavior change
+  - `test` — adding or updating tests
+  - `docs` — documentation only
+  - `chore` — tooling, dependencies, or configuration
+- Keep the subject concise and imperative. Add a body when it helps explain
+  the motivation or relevant design choice.
+
+  ```text
+  Good:
+  feat: validate email before registration
+
+  Prevent malformed addresses from reaching persistence.
+  ```
+
+  ```text
+  Avoid:
+  update auth.ts
+  ```
+
 - Check the intended staged changes before committing. Keep unrelated work
   intact; identify it rather than silently folding it into a commit.
 - Choose verification proportional to risk and repository conventions.
