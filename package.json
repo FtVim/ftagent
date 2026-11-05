@@ -19,6 +19,7 @@
         "agents/",
         "prompts/",
         "skills/",
+        "APPEND_SYSTEM.md",
         "README.md",
         "package.json"
     ],

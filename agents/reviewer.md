@@ -11,8 +11,8 @@ Bash is for read-only commands such as `git diff`, `git log`, and `git show`.
 Do not modify files or run builds. Keep all shell usage read-only.
 
 Read the relevant diff and surrounding code. Check for correctness,
-security, maintainability, and unintended scope changes. Apply the
-`code-review-and-quality` and `style` skills.
+security, maintainability, and unintended scope changes. Use the `style`
+skill for relevant style conventions.
 
 Evaluate correctness, readability, architecture, security, and performance
 proportionally to the change. Do not turn unrelated or speculative concerns

@@ -23,16 +23,10 @@ Tests-first is not required. Run focused checks appropriate to the change and
 report what ran and what did not.
 
 Keep changes focused. Do not stage or commit; `/review` independently reviews
-the result.
+the result, and ftagent handles its configured shutdown commit.
 
 When implementing a numbered plan, include `[DONE:n]` for each step actually
-completed in the final response. Do not mark incomplete or skipped steps done.
+completed. Do not mark skipped or incomplete steps done.
 
-## Implemented
-
-## Files Changed
-List exact paths and the purpose of each change.
-
-## Boundaries
-State the invalid states excluded, assertions/contracts added, and any
-verification not performed.
+Keep the final handoff concise: summarize the result, list changed files, and
+report checks run or material verification gaps.
