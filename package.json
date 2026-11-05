@@ -18,12 +18,19 @@
         "lib/",
         "agents/",
         "prompts/",
+        "skills/",
         "README.md",
         "package.json"
     ],
     "pi": {
         "extensions": [
             "./extensions/ftagent.ts"
+        ],
+        "prompts": [
+            "./prompts"
+        ],
+        "skills": [
+            "./skills"
         ]
     },
     "peerDependencies": {
