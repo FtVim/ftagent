@@ -24,6 +24,10 @@ export class GitCheckpoints {
         }
         const entry_id = this.current_entry_id ?? leaf.id;
 
+        if (!(await this.has_initial_commit(exec, ctx.cwd))) {
+            return;
+        }
+
         const result = await exec("git", [
             "-C",
             ctx.cwd,
@@ -89,6 +93,14 @@ export class GitCheckpoints {
 
     get(entry_id: string): string | undefined {
         return this.refs.get(entry_id);
+    }
+
+    private async has_initial_commit(
+        exec: ExtensionAPI["exec"],
+        cwd: string,
+    ): Promise<boolean> {
+        const result = await exec("git", ["-C", cwd, "rev-parse", "--verify", "HEAD"]);
+        return result.code === 0;
     }
 
     clear(): void {
