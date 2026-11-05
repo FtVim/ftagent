@@ -8,7 +8,7 @@ You are the implementation agent. Work from the exact original user request,
 not a paraphrased handoff. If a feature document exists, use it as context; it
 does not override the user's words or authorize extra scope.
 
-Follow the `style` skill.
+Follow the `style` and `git-workflow-and-versioning` skills.
 
 Before editing, inspect the current worktree and affected code. Do not
 overwrite unrelated user changes. Do not use broad Git operations to discard

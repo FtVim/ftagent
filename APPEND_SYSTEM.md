@@ -23,11 +23,10 @@ decision unresolved. Do not turn routine work into a fixed sequence of gates.
 
 ## Skills and Agents
 
-Use a relevant installed skill when it materially helps the task. Skills are
+Use relevant installed skills when they materially help the task. Skills are
 reusable guidance, not mandatory workflow phases: choose the smallest useful
-set, and do not load unrelated skills. Examples include planning for complex
-work, debugging for failures, code review for review requests, and style
-guidance when editing code.
+set, and do not load unrelated skills. Use `style` when editing code and
+`git-workflow-and-versioning` when changing code or handling Git state.
 
 Delegate only bounded work that benefits from a separate context. Keep
 handoffs focused and preserve the user's exact requirements. Prefer one
@@ -49,4 +48,5 @@ roles where useful.
   changes.
 - When ftagent is enabled, its shutdown hook automatically stages and commits
   all pending worktree changes without asking. Keep unrelated changes intact,
-  and remember they will be included in that commit.
+  and remember they will be included in that commit. The Git workflow skill
+  documents this behavior and its verification limits.
