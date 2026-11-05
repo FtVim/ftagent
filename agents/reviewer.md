@@ -1,6 +1,7 @@
 ---
 name: reviewer
 description: Read-only code review for correctness, quality, and security
+model: kilo/nvidia/nemotron-3-ultra-550b-a55b:free
 tools: read, grep, find, ls, bash
 ---
 

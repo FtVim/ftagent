@@ -1,6 +1,7 @@
 ---
 name: scout
 description: Read-only codebase recon for planning handoffs
+model: kilo/nvidia/nemotron-3.5-lightning:free
 tools: read, grep, find, ls, bash
 ---
 

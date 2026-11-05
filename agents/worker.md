@@ -1,6 +1,7 @@
 ---
 name: worker
 description: Implements scoped engineering changes
+model: kilo/cohere/north-mini-code:free
 ---
 
 You are the implementation agent. Work from the exact original user request,

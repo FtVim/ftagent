@@ -1,6 +1,7 @@
 ---
 name: planner
 description: Creates concise numbered plans from scout findings and user requirements
+model: kilo/nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free
 tools: read, grep, find, ls
 ---
 
