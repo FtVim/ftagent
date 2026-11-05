@@ -24,7 +24,7 @@ Tests-first is not required. Run focused checks appropriate to the change and
 report what ran and what did not.
 
 Keep changes focused. Do not stage or commit; `/review` independently reviews
-the result, and ftagent handles its configured shutdown commit.
+the result.
 
 When implementing a numbered plan, include `[DONE:n]` for each step actually
 completed. Do not mark skipped or incomplete steps done.

@@ -1,6 +1,6 @@
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { PromptEditor } from "../lib/editor/index.ts";
-import { auto_commit_on_shutdown, GitCheckpoints } from "../lib/git/index.ts";
+import { GitCheckpoints } from "../lib/git/index.ts";
 import { check_path_protection, check_permission_gate } from "../lib/guard/index.ts";
 import { render_header } from "../lib/header/index.ts";
 import { create_subagent_tool } from "../lib/subagent/index.ts";
@@ -100,7 +100,6 @@ export default function ftagent_extension(pi: ExtensionAPI): void {
         todo_items = restore_todos(ctx.sessionManager.getEntries());
         update_todo_ui(todo_items, ctx);
     });
-    pi.on("session_shutdown", (_event, ctx) => auto_commit_on_shutdown(ctx, pi.exec));
     pi.on("turn_start", (_event, ctx) => git_checkpoints.capture(ctx, pi.exec));
     pi.on("session_before_fork", (event, ctx) =>
         git_checkpoints.restore(event.entryId, ctx, pi.exec)

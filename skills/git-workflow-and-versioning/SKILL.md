@@ -12,27 +12,21 @@ the project's configured workflow when it differs from these defaults.
 
 ## Changes and Commits
 
-- Keep changes focused and commits limited to one coherent unit of work.
+- Keep each commit limited to one coherent unit of work.
 - Use a descriptive conventional subject, such as `fix: preserve todo order`.
   Explain why in the body when the reason is not clear from the subject.
-- Check the intended changes before committing. Keep unrelated work intact;
-  identify it rather than silently folding it into a manual commit.
+- Check the intended staged changes before committing. Keep unrelated work
+  intact; identify it rather than silently folding it into a commit.
 - Choose verification proportional to risk and repository conventions.
   Tests-first and a test for every invalid state are not required.
 - Do not force-push or rewrite shared history unless explicitly asked.
 
-## ftagent Checkpoints and Auto-Commit
+## ftagent Checkpoints
 
 - ftagent captures Git checkpoints as session recovery snapshots. They are
   not commits or branches. Restore a checkpoint only after user confirmation.
-- ftagent automatically stages and commits all pending worktree changes at
-  session shutdown. This is intentional; unrelated pending changes will be
-  included, so preserve them and make their presence clear to the user.
-- Agents should not create competing manual commits during implementation.
-  Leave the completed task for the configured shutdown commit.
-- The shutdown hook derives a short commit subject from the latest assistant
-  summary and does not run tests, lint, or secret scans. Report relevant
-  verification gaps instead of implying those checks ran.
+- Checkpoints do not stage, commit, or apply the commit conventions below.
+- Do not stage or commit until the user or repository workflow authorizes it.
 
 ## Branches and Worktrees
 

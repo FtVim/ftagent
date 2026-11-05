@@ -6,4 +6,4 @@ description: Implement a scoped change using an approved plan when present
 Invoke one `worker` with the complete original request `$@`, approved plan if
 present, and persisted todos. The worker follows `style` and
 `git-workflow-and-versioning`, and returns `[DONE:n]` for completed todos.
-Leave independent review to `/review`.
+Leave independent review to `/review`; do not commit.

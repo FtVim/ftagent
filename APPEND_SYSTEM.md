@@ -46,7 +46,5 @@ roles where useful.
 - Inspect existing worktree changes before editing and preserve unrelated work.
 - Treat Git checkpoints as recovery aids, not commits or permission to discard
   changes.
-- When ftagent is enabled, its shutdown hook automatically stages and commits
-  all pending worktree changes without asking. Keep unrelated changes intact,
-  and remember they will be included in that commit. The Git workflow skill
-  documents this behavior and its verification limits.
+- Stage and commit only the intended changes, following the project's Git
+  workflow. Do not commit unless the user or repository workflow authorizes it.
